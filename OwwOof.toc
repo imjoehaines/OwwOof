@@ -1,0 +1,7 @@
+## Interface: 70300
+## Title: Oww Oof (my bones)
+## Notes: Show the damage you take so you know when to say "Oww" or "Oof"
+## Author: grace
+## Version: 1.0.0
+
+index.lua

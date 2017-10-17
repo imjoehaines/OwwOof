@@ -2,28 +2,40 @@ local endsWith = function (str, value)
   return string.sub(str, -string.len(value)) == value
 end
 
+local displayDamage = function (damage)
+  local frame = CreateFrame('Frame')
+  local text = frame:CreateFontString(nil, 'OVERLAY')
+  text:SetPoint('CENTER', UIParent, 'CENTER', 0, -100)
+  text:SetShadowOffset(1, -1.25)
+  text:SetShadowColor(0, 0, 0, 1)
+  text:SetTextColor(1, 1, 1)
+  text:SetFont('Fonts\\FRIZQT__.TTF', 14)
+
+  text:SetText('-' .. damage)
+
+  local animationGroup = frame:CreateAnimationGroup()
+  local fade = animationGroup:CreateAnimation('Alpha')
+  fade:SetStartDelay(1)
+  fade:SetDuration(0.2)
+  fade:SetOrder(1)
+  fade:SetSmoothing('IN')
+  fade:SetFromAlpha(1)
+  fade:SetToAlpha(0)
+
+  local translation = animationGroup:CreateAnimation('Translation')
+  translation:SetDuration(1.2)
+  translation:SetOrder(1)
+  translation:SetOffset(0, -100)
+
+  animationGroup:SetScript('OnFinished', function ()
+    frame:SetAlpha(0)
+  end)
+
+  animationGroup:Play()
+end
+
 local frame = CreateFrame('Frame')
-
-local text = frame:CreateFontString(nil, 'OVERLAY')
-text:SetPoint('CENTER', UIParent, 'CENTER', 0, -200)
-text:SetShadowOffset(1, -1.25)
-text:SetShadowColor(0, 0, 0, 1)
-text:SetTextColor(1, 1, 1)
-text:SetFont('Fonts\\FRIZQT__.TTF', 14)
-
 frame:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
-
-local animationGroup = frame:CreateAnimationGroup()
-local animation = animationGroup:CreateAnimation('Alpha')
-animation:SetStartDelay(2)
-animation:SetDuration(0.5)
-animation:SetSmoothing('IN')
-animation:SetFromAlpha(1)
-animation:SetToAlpha(0)
-
-animationGroup:SetScript('OnFinished', function()
-  frame:SetAlpha(0)
-end)
 
 frame:SetScript('OnEvent', function (_, _, ...)
   local subEvent = select(2, ...)
@@ -45,10 +57,5 @@ frame:SetScript('OnEvent', function (_, _, ...)
 
   local damage = select(damageIndex, ...)
 
-  text:SetText(damage)
-
-  if animationGroup:IsPlaying() then animationGroup:Stop() end
-
-  frame:SetAlpha(1)
-  animationGroup:Play()
+  displayDamage(damage)
 end)
